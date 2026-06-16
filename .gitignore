@@ -17,6 +17,8 @@
 /.next/
 /out/
 
+CLAUDE.md
+
 # production
 /build
 

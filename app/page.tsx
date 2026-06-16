@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import ImageTabs from "@/components/ui/image-tabs";
 import { ArrowRight, CheckCircle2, TrendingUp, Briefcase } from "lucide-react";
 import Link from "next/link";
 
@@ -25,7 +26,7 @@ export default function Home() {
           </div>
         </section>
         {/* features */}
-        <section className="border-t bg-white py-24">
+        <section className="border-t bg-white py-24 pt">
           <div className="container mx-auto px-4">
             <div className="grid gap-12 md:grid-cols-3">
               <div className="flex flex-col">
@@ -67,6 +68,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <ImageTabs/>
       </main>
     </div>
   );
