@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Briefcase, Ghost } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import Link from "next/link";
+import { getSession, signOut } from "@/lib/auth/auth";
 
 export default function NavBar() {
     return (
@@ -12,7 +13,7 @@ export default function NavBar() {
                 </Link>
                 <div className="flex gap-2 items-center">
                     <Button variant="ghost" className="text-gray-700 hover:text-black">
-                        <Link href="/log-in" >Log In</Link>
+                        <Link href="/sign-in" >Log In</Link>
                     </Button>
                     <Button className="hover:bg-primary/90">
                         <Link href="/sign-up">Start for free</Link>
@@ -20,5 +21,5 @@ export default function NavBar() {
                 </div>
             </div>
         </nav>
-    )
+    );
 }

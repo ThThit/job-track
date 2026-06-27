@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Figtree, Noto_Sans, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import NavBar from "./navbar/page";
+import NavBar from "@/components/ui/navbar";
 
 const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
 
