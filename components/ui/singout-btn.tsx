@@ -1,16 +1,16 @@
 "use client";
 
 import { signOut } from "@/lib/auth/auth-client";
-import { Button } from "../ui/button";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 export default function SignOutButton() {
     const router = useRouter();
 
     return (
-        <Button
-            variant="ghost"
-            className="text-gray-700 hover:text-white hover:bg-red-600"
+        <DropdownMenuItem
+            className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
             onClick={async () => {
                 const result = await signOut();
                 if (result.data) {
@@ -20,7 +20,8 @@ export default function SignOutButton() {
                 }
             }}
         >
-            Log Out
-        </Button>
+            <LogOut className="h-4 w-4" />
+            Sign out
+        </DropdownMenuItem>
     );
 }
