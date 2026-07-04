@@ -29,6 +29,9 @@ const JobApplicationSchema = new Schema<IJobApplication>(
             type: String,
             required: true
         },
+        location: {
+            type: String,
+        },
         status: {
             type: String,
             required: true,

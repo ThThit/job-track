@@ -28,7 +28,7 @@ export default function NavBar() {
                                 <Button variant="ghost" className="hover:text-gray-700">Dashboard</Button>
                             </Link>
 
-                            <DropdownMenu>
+                            <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <Avatar className="cursor-pointer me-3">
                                         <AvatarFallback className="bg-primary text-white">
@@ -38,7 +38,7 @@ export default function NavBar() {
                                 </DropdownMenuTrigger>
                                     
                                 <DropdownMenuContent className="w-6" align="end">
-                                    <DropdownMenuLabel className="font-normal border-b-2 mb-1">
+                                    <DropdownMenuLabel className="font-normal border-b-2 mb-1 pb-2">
                                         <div className="flex flex-col space-y-1">
                                             <p className="text-sm font-medium leading-none">
                                                 {session?.user?.name}
