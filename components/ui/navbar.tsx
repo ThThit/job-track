@@ -24,9 +24,9 @@ export default function NavBar() {
                         <>
                             {/* show when login */}
 
-                            <Link href="/dashboard">
-                                <Button variant="ghost" className="hover:text-gray-700">Dashboard</Button>
-                            </Link>
+                            <Button asChild variant="ghost" className="hover:text-gray-700">
+                                <Link href="/dashboard">Dashboard</Link>
+                            </Button>
 
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
@@ -57,10 +57,10 @@ export default function NavBar() {
                         <>
                             {/* show when not login */}
                             <div className="flex gap-2 items-center">
-                                <Button variant="ghost" className="text-gray-700 hover:text-black">
-                                    <Link href="/sign-in" >Log In</Link>
+                                <Button asChild variant="ghost" className="text-gray-700 hover:text-black">
+                                    <Link href="/sign-in">Log In</Link>
                                 </Button>
-                                <Button className="hover:bg-primary/90">
+                                <Button asChild className="hover:bg-primary/90">
                                     <Link href="/sign-up">Start for free</Link>
                                 </Button>
                             </div>

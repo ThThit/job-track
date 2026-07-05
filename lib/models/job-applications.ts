@@ -2,10 +2,10 @@ import mongoose, { Schema, Document, mongo } from "mongoose";
 
 export interface IJobApplication extends Document {
     company: string;
-    postition: string;
+    position: string;
     location?: string;
     status: string;
-    columId: mongoose.Types.ObjectId;
+    columnId: mongoose.Types.ObjectId;
     boardId: mongoose.Types.ObjectId;
     userId: string;
     order: number;
@@ -25,7 +25,7 @@ const JobApplicationSchema = new Schema<IJobApplication>(
             type: String,
             required: true
         },
-        postition: {
+        position: {
             type: String,
             required: true
         },
@@ -37,7 +37,7 @@ const JobApplicationSchema = new Schema<IJobApplication>(
             required: true,
             default: "applied"
         },
-        columId: {
+        columnId: {
             type: Schema.Types.ObjectId,
             required: true,
             ref: "Column",

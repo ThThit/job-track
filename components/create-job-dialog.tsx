@@ -14,41 +14,28 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import React, { useState } from "react";
-
+import { useActionState, useEffect, useState } from "react";
+import { createJobAction } from "@/app/actions/create-job";
 
 interface CreateJobApplicationDialogProps {
     columnId: string;
     boardId: string;
 }
 
-const INITIAL_FORM_DATA = {
-    company: "",
-    position: "",
-    location: "",
-    notes: "",
-    salary: "",
-    jobUrl: "",
-    tags: "",
-    description: "",
-};
-
 export default function CreateJobApplicationDialog({
     columnId,
     boardId,
 }: CreateJobApplicationDialogProps) {
     const [open, setOpen] = useState<boolean>(false);
-    const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+    const [state, action, isPending] = useActionState(createJobAction, { success: false });
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-
-        
-    }
+    useEffect(() => {
+        if (state.success) setOpen(false);
+    }, [state.success]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>
+            <DialogTrigger asChild>
                 <Button
                     variant="outline"
                     className="w-full mb-4 justify-start text-muted-foreground border-dashed border-2 hover:border-solid hover:bg-muted/50"
@@ -62,112 +49,57 @@ export default function CreateJobApplicationDialog({
                     <DialogTitle>Add Job Application</DialogTitle>
                     <DialogDescription>Track a new job application</DialogDescription>
                 </DialogHeader>
-                <form className="space-y-4" onSubmit={handleSubmit}>
+                <form className="space-y-4" action={action}>
+                    <input type="hidden" name="columnId" value={columnId} />
+                    <input type="hidden" name="boardId" value={boardId} />
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="company">Company *</Label>
-                                <Input
-                                    id="company"
-                                    required
-                                    value={formData.company}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, company: e.target.value })
-                                    }
-                                />
+                                <Input id="company" name="company" required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="position">Position *</Label>
-                                <Input
-                                    id="position"
-                                    required
-                                    value={formData.position}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, position: e.target.value })
-                                    }
-                                />
+                                <Input id="position" name="position" required />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="location">Location</Label>
-                                <Input
-                                    id="location"
-                                    value={formData.location}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, location: e.target.value })
-                                    }
-                                />
+                                <Input id="location" name="location" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="salary">Salary</Label>
-                                <Input
-                                    id="salary"
-                                    placeholder="e.g., $100k - $150k"
-                                    value={formData.salary}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, salary: e.target.value })
-                                    }
-                                />
+                                <Input id="salary" name="salary" placeholder="e.g., $100k - $150k" />
                             </div>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="jobUrl">Job URL</Label>
-                            <Input
-                                id="jobUrl"
-                                type="url"
-                                placeholder="https://..."
-                                value={formData.jobUrl}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, jobUrl: e.target.value })
-                                }
-                            />
+                            <Input id="jobUrl" name="jobUrl" type="url" placeholder="https://..." />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="tags">Tags (comma-separated)</Label>
-                            <Input
-                                id="tags"
-                                placeholder="React, Tailwind, High Pay"
-                                value={formData.tags}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, tags: e.target.value })
-                                }
-                            />
+                            <Input id="tags" name="tags" placeholder="React, Tailwind, High Pay" />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="description">Description</Label>
-                            <Textarea
-                                id="description"
-                                rows={3}
-                                placeholder="Brief description of the role..."
-                                value={formData.description}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, description: e.target.value })
-                                }
-                            />
+                            <Textarea id="description" name="description" rows={3} placeholder="Brief description of the role..." />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="notes">Notes</Label>
-                            <Textarea
-                                id="notes"
-                                rows={4}
-                                value={formData.notes}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, notes: e.target.value })
-                                }
-                            />
+                            <Textarea id="notes" name="notes" rows={4} />
                         </div>
                     </div>
 
+                    {state.error && <p className="text-sm text-destructive">{state.error}</p>}
+
                     <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                        >
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit">Add Application</Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? "Adding..." : "Add Application"}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

@@ -33,7 +33,7 @@ async function DashBoardPage() {
     }
 
     const board = await getBoard(session.user.id);
-    console.log("board", board);
+    // console.log("board", board);
 
     return (
         <div className="min-h-screen bg-white overflow-x-hidden">
