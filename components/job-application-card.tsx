@@ -3,6 +3,7 @@
 import { Column, JobApplication } from "@/lib/models/models.types";
 import { useState } from "react";
 import { Card, CardContent } from "./ui/card";
+import { ExternalLink } from "lucide-react";
 
 interface JobApplicationCardProps {
     job: JobApplication;
@@ -30,11 +31,31 @@ export default function JobApplicationCard({
 
     return (
         <>
-            <Card>
+            <Card className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm">
                 <CardContent>
                     <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                            
+                            <h3 className="font-semibold text-sm mb-1">{job.position}</h3>
+                            <p className="text-xs text-muted-foreground mb-2">{job.company}</p>
+                            {job.description && (
+                                <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                                    {job.description}
+                                </p>
+                            )}
+                            {job.tags && job.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                    {job.tags.map((tag, index) => (
+                                        <span key={index} className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                            {job.jobUrl && (
+                                <a href={job.jobUrl} >
+                                    <ExternalLink className="h-3 w-3"/>
+                                </a>
+                            )}
                         </div>
                     </div>
                 </CardContent>
