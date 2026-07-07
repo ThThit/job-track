@@ -12,7 +12,7 @@ export default function NavBar() {
     const { data: session } = useSession();
 
     return (
-        <nav className="border-b border-gray-200 bg-white">
+        <nav className="border-b border-gray-200 bg-white sticky top-0 z-50">
             <div className="container mx-auto flex gap-5 h-16 items-center px-4 justify-between">
                 <Link href="/" className="flex items-center gap-2 text-2xl font-semibold text-primary">
                     <Briefcase />

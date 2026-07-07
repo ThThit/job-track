@@ -9,10 +9,6 @@
   display: none;
 }
 
-html, body {
-  overflow-x: hidden;
-}
-
 
 @custom-variant dark (&:is(.dark *));
 

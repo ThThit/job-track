@@ -15,7 +15,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useActionState, useEffect, useState } from "react";
-import { createJobAction } from "@/app/actions/create-job";
+import { createJobAction } from "@/app/actions/job-applications";
 
 interface CreateJobApplicationDialogProps {
     columnId: string;

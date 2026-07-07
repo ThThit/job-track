@@ -64,3 +64,26 @@ export async function createJobAction(prevState: CreateJobState, formData: FormD
         return { success: false, error: (e as Error).message };
     }
 }
+
+export async function deleteJobApplication(id: string) {
+    const session = await getSession();
+
+    if (!session?.user) {
+        return { error: "Unauthorized" };
+    }
+
+    const jobApplication = await JobApplication.findById(id);
+
+    if (!jobApplication) {
+        return { error: "Job Application not found" };
+    }
+
+    if (jobApplication.userId !== session.user.id) {
+        return { error: "Unauthorized" };
+    }
+
+    await JobApplication.deleteOne({ _id: id });
+    revalidatePath("/dashboard");
+
+    return { success: true };
+}

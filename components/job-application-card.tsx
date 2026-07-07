@@ -3,7 +3,10 @@
 import { Column, JobApplication } from "@/lib/models/models.types";
 import { useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Edit2, ExternalLink, MoreVertical, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { deleteJobApplication } from "@/app/actions/job-applications";
 
 interface JobApplicationCardProps {
     job: JobApplication;
@@ -28,6 +31,19 @@ export default function JobApplicationCard({
         tags: job.tags?.join(", ") || "",
         descriptioin: job.description || "",
     });
+
+    // job card delete handle
+    async function handleDelete() {
+        try {
+            const result = await deleteJobApplication(job._id);
+
+            if (result.error) {
+                console.error("Failed to delete job application", result.error);
+            }
+        } catch (err) {
+            console.error("Failed to move job application: ", err);
+        }
+    }
 
     return (
         <>
@@ -56,6 +72,24 @@ export default function JobApplicationCard({
                                     <ExternalLink className="h-3 w-3"/>
                                 </a>
                             )}
+                        </div>
+                        {/* drop down option */}
+                        <div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-6 w-6" size="icon">
+                                        <MoreVertical className="h-4 w-4"/>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <Edit2 className="mr-2 h-4 w-4"/>Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive" onClick={() => handleDelete()}>
+                                        <Trash2 className="mr-2 h-4 w-4"/>Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 </CardContent>
