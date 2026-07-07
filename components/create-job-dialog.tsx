@@ -16,25 +16,34 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useActionState, useEffect, useState } from "react";
 import { createJobAction } from "@/app/actions/job-applications";
+import { JobApplication } from "@/lib/models/models.types";
 
 interface CreateJobApplicationDialogProps {
     columnId: string;
     boardId: string;
+    job?: JobApplication;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
 export default function CreateJobApplicationDialog({
     columnId,
     boardId,
+    job, 
+    open,
+    onOpenChange,
 }: CreateJobApplicationDialogProps) {
-    const [open, setOpen] = useState<boolean>(false);
+    const [internalOpen, setInternalOpen] = useState(false);
+    const isOpen = open ?? internalOpen;
+    const setIsOpen = onOpenChange ?? setInternalOpen;
     const [state, action, isPending] = useActionState(createJobAction, { success: false });
 
     useEffect(() => {
-        if (state.success) setOpen(false);
+        if (state.success) setIsOpen(false);
     }, [state.success]);
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
@@ -94,7 +103,7 @@ export default function CreateJobApplicationDialog({
                     {state.error && <p className="text-sm text-destructive">{state.error}</p>}
 
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                        <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={isPending}>

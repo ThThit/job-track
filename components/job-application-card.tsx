@@ -45,6 +45,8 @@ export default function JobApplicationCard({
         }
     }
 
+    // handle update
+
     return (
         <>
             <Card className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm">

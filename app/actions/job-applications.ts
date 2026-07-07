@@ -3,7 +3,21 @@
 import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";
 import { Column, JobApplication } from "@/lib/models";
+import jobApplications from "@/lib/models/job-applications";
 import { revalidatePath } from "next/cache";
+
+function extractJobFields(formData: FormData) {
+    return {
+        company: formData.get("company") as string,
+        position: formData.get("position") as string,
+        location: formData.get("location") as string,
+        salary: formData.get("salary") as string,
+        jobUrl: formData.get("jobUrl") as string,
+        tagsRaw: formData.get("tags") as string,
+        description: formData.get("description") as string,
+        notes: formData.get("notes") as string,
+    }
+}
 
 
 export type CreateJobState = {
@@ -18,19 +32,12 @@ export async function createJobAction(prevState: CreateJobState, formData: FormD
         success: false, error: "Unathorized"
     };
 
-    const company = formData.get("company") as string;
-    const position = formData.get("position") as string;
+    const fields = extractJobFields(formData);
+
     const columnId = formData.get("columnId") as string;
     const boardId = formData.get("boardId") as string;
-    console.log("formData:", { company, position, columnId, boardId });
-    const location = formData.get("location") as string;
-    const salary = formData.get("salary") as string;
-    const jobUrl = formData.get("jobUrl") as string;
-    const tagsRaw = formData.get("tags") as string;
-    const description = formData.get("description") as string;
-    const notes = formData.get("notes") as string;
 
-    if (!company || !position) return { success: false, error: "Company and Position are required" };
+    if (!fields.company || !fields.position) return { success: false, error: "Company and Position are required" };
 
     try {
         await connectDB();
@@ -39,15 +46,15 @@ export async function createJobAction(prevState: CreateJobState, formData: FormD
         if (!column) return { success: false, error: "Column not found" };
 
         const job = await JobApplication.create({
-            company,
-            position,
-            location,
-            salary,
-            jobUrl,
-            tags: tagsRaw ? tagsRaw.split(",").map((t: string) => t.trim()).filter((t) => t.length > 0) : [],
-            description,
-            notes,
-            columnId: columnId,
+            company: fields.company,
+            position: fields.position,
+            location: fields.location,
+            salary: fields.salary,
+            jobUrl: fields.jobUrl,
+            tags: fields.tagsRaw ? fields.tagsRaw.split(",").map((t: string) => t.trim()).filter((t) => t.length > 0) : [],
+            description: fields.description,
+            notes: fields.notes,
+            columnId,
             boardId,
             userId: session.user.id,
             order: column.jobApplications.length,
@@ -67,23 +74,47 @@ export async function createJobAction(prevState: CreateJobState, formData: FormD
 
 export async function deleteJobApplication(id: string) {
     const session = await getSession();
+    if (!session?.user) return { error: "Unauthorized" };
 
-    if (!session?.user) {
-        return { error: "Unauthorized" };
+    try {
+        await connectDB();
+
+        const job = await JobApplication.findById(id);
+        if (!job) return { error: "Job application not found" };
+        if (job.userId !== session.user.id) return { error: "Unauthorized" };
+
+        await Column.findByIdAndUpdate(job.columnId, {
+            $pull: { jobApplications: job._id },
+        });
+
+        await JobApplication.deleteOne({ _id: id });
+        revalidatePath("/dashboard");
+
+        return { success: true };
+    } catch (e) {
+        return { error: (e as Error).message };
     }
+}
 
-    const jobApplication = await JobApplication.findById(id);
+export async function updateJobApplication(prevState: CreateJobState, formData: FormData): Promise<CreateJobState> {
+    const fields = extractJobFields(formData);
+    const jobId = formData.get("jobId") as string;
+    const { tagsRaw, ...rest } = fields;
 
-    if (!jobApplication) {
-        return { error: "Job Application not found" };
+    const session = await getSession();
+    if (!session?.user) return { success: false, error: "Unauthorized" };
+
+    try {
+        await connectDB();
+        
+        await JobApplication.findByIdAndUpdate(jobId, {
+            ...rest,
+            tags: tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(t => t.length > 0) : [],
+        });
+
+        revalidatePath("/dashboard");
+        return { success: true };
+    } catch (err) {
+        return { success: false, error: (err as Error).message };
     }
-
-    if (jobApplication.userId !== session.user.id) {
-        return { error: "Unauthorized" };
-    }
-
-    await JobApplication.deleteOne({ _id: id });
-    revalidatePath("/dashboard");
-
-    return { success: true };
 }

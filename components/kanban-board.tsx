@@ -48,7 +48,7 @@ function DroppableColumn({
     column: Column; config: ColConfig; boardId: string;
 }) {
     return (
-        <Card className="w-full md:min-w-75 md:w-75 flex shrink-0 shadow-md p-0 rounded-b-none">
+        <Card className="w-full md:min-w-75 md:w-75 flex shrink-0 shadow-md p-0 rounded-br-none">
             <CardHeader className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ function DroppableColumn({
                     </DropdownMenu>
                 </div>
             </CardHeader>
-            <CardContent className={`space-y-2 pt-4 bg-gray-50 min-h-[400px] rounded-b-lg}`}>
+            <CardContent className="space-y-2 pt-4 bg-gray-50 rounded-bl-lg pb-3 min-h-[400px]">
 
                 <CreateJobApplicationDialog columnId={column._id} boardId={boardId} />
                 {column.jobApplications.map((job) => (
@@ -87,7 +87,7 @@ export default function KanbanBoard({ board, userId }: kanbanBoardProps) {
     return (
         <>
             <div className="overflow-hidden">
-                <div className="mb-2 flex flex-col md:flex-row gap-2 overflow-x-auto pb-2 scrollbar-hidden">
+                <div className="mb-2 flex flex-col md:flex-row md:items-start gap-2 overflow-x-auto pb-2 scrollbar-hidden">
                     {columns.map((col, key) => {
                         const config = COLUMN_CONFIG[key] || {
                             color: "bg-gray-500",
