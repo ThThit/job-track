@@ -14,9 +14,10 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useActionState, useEffect, useState } from "react";
+import { useTransition, useState } from "react";
 import { createJobAction } from "@/app/actions/job-applications";
 import { JobApplication } from "@/lib/models/models.types";
+import { CreateJobState } from "@/app/actions/job-applications";
 
 interface CreateJobApplicationDialogProps {
     columnId: string;
@@ -36,29 +37,38 @@ export default function CreateJobApplicationDialog({
     const [internalOpen, setInternalOpen] = useState(false);
     const isOpen = open ?? internalOpen;
     const setIsOpen = onOpenChange ?? setInternalOpen;
-    const [state, action, isPending] = useActionState(createJobAction, { success: false });
+    const [state, setState] = useState<CreateJobState>({ success: false });
+    const [isPending, startTransition] = useTransition();
 
-    useEffect(() => {
-        if (state.success) setIsOpen(false);
-    }, [state.success]);
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        startTransition(async () => {
+            const result = await createJobAction({ success: false }, formData);
+            setState(result);
+            if (result.success) setIsOpen(false);
+        });
+    }
 
     return (
-        <Dialog open={open} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    className="w-full mb-4 justify-start text-muted-foreground border-dashed border-2 hover:border-solid hover:bg-muted/50"
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Job
-                </Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            {!job && (
+                <DialogTrigger asChild>
+                    <Button
+                        variant="outline"
+                        className="w-full mb-4 justify-start text-muted-foreground border-dashed border-2 hover:border-solid hover:bg-muted/50"
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Job
+                    </Button>
+                </DialogTrigger>
+            )}
             <DialogContent className="max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Add Job Application</DialogTitle>
                     <DialogDescription>Track a new job application</DialogDescription>
                 </DialogHeader>
-                <form className="space-y-4" action={action}>
+                <form className="space-y-4" onSubmit={handleSubmit}>
                     <input type="hidden" name="columnId" value={columnId} />
                     <input type="hidden" name="boardId" value={boardId} />
                     <div className="space-y-4">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Edit2, ExternalLink, MoreVertical, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { deleteJobApplication } from "@/app/actions/job-applications";
+import CreateJobApplicationDialog from "./create-job-dialog";
 
 interface JobApplicationCardProps {
     job: JobApplication;
@@ -19,18 +20,7 @@ export default function JobApplicationCard({
     columns,
     dragHandleProps,
 }: JobApplicationCardProps) {
-    const [isEditing, setEditing] = useState(false);
-    const [formData, setFormData] = useState({
-        company: job.company,
-        position: job.position,
-        location: job.location || "",
-        notes: job.notes || "",
-        salary: job.salary || "",
-        jobUrl: job.jobUrl || "",
-        columnId: job.columnId || "",
-        tags: job.tags?.join(", ") || "",
-        descriptioin: job.description || "",
-    });
+    const [editOpen, setEditOpen] = useState(false);
 
     // job card delete handle
     async function handleDelete() {
@@ -84,7 +74,7 @@ export default function JobApplicationCard({
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setEditOpen(true)}>
                                         <Edit2 className="mr-2 h-4 w-4"/>Edit
                                     </DropdownMenuItem>
                                     <DropdownMenuItem className="text-destructive" onClick={() => handleDelete()}>
@@ -96,6 +86,7 @@ export default function JobApplicationCard({
                     </div>
                 </CardContent>
             </Card>
+            <CreateJobApplicationDialog job={job} columnId={job.columnId ?? ""} boardId={job.boardId ?? ""} open={editOpen} onOpenChange={setEditOpen}/>
         </>
     )
 }
