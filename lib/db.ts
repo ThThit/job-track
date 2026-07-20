@@ -27,7 +27,11 @@ if (!global.mongoose) {
 // connection
 async function connectDB() {
     if (cached.conn) {
-        return cached.conn;
+        if (cached.conn.connection.readyState === 1) {
+            return cached.conn;
+        }
+        cached.conn = null;
+        cached.promise = null;
     }
 
     if (!cached.promise) {

@@ -1,5 +1,7 @@
 "use client";
 
+// also used as edit job dialog
+
 import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {

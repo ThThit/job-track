@@ -2,8 +2,7 @@
 
 import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";
-import { Column, JobApplication } from "@/lib/models";
-import jobApplications from "@/lib/models/job-applications";
+import { Board, Column, JobApplication } from "@/lib/models";
 import { revalidatePath } from "next/cache";
 
 function extractJobFields(formData: FormData) {
@@ -116,5 +115,30 @@ export async function updateJobApplication(prevState: CreateJobState, formData: 
         return { success: true };
     } catch (err) {
         return { success: false, error: (err as Error).message };
+    }
+}
+
+export async function deleteJobColumn(id: string) {
+    const session = await getSession();
+    if (!session?.user) return { error: "Unathorized" };
+
+    try {
+        await connectDB();
+
+        const jobColumn = await Column.findById(id);
+        if (!jobColumn) return { error: "Column not found" };
+
+        await JobApplication.deleteMany({ columnId: id });
+
+        await Board.findByIdAndUpdate(jobColumn.boardId, {
+            $pull: { columns: jobColumn._id },
+        });
+
+        await Column.deleteOne({ _id: id });
+
+        revalidatePath("/dashboard");
+        return { success: true };
+    } catch (e) {
+        return { error: (e as Error).message };
     }
 }
