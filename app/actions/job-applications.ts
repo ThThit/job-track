@@ -136,6 +136,7 @@ export async function deleteJobColumn(id: string) {
 
         await Column.deleteOne({ _id: id });
 
+        console.log("deleteJobColumn success:", id);
         revalidatePath("/dashboard");
         return { success: true };
     } catch (e) {

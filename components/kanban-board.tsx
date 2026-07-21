@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import CreateJobApplicationDialog from "./create-job-dialog";
 import JobApplicationCard from "./job-application-card";
+import { deleteJobColumn } from "@/app/actions/job-applications";
 
 interface kanbanBoardProps {
     board: Board;
@@ -46,7 +47,22 @@ function DroppableColumn({
     column, config, boardId
 }: {
     column: Column; config: ColConfig; boardId: string;
-}) {
+    }) {
+    
+    async function handleDelete() {
+        try {
+            const result = await deleteJobColumn(column._id);
+
+            if (result.error) {
+                 console.error("Failed to delete job column", result.error);
+            } else {
+                console.log("Success");
+            }
+        } catch (err) {
+            console.error("Failed to delete job column: ", err);
+        }
+    }
+    
     return (
         <Card className="w-full md:min-w-75 md:w-75 flex shrink-0 shadow-md p-0 rounded-br-none">
             <CardHeader className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}>
@@ -63,7 +79,7 @@ function DroppableColumn({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleDelete()}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete Column
                             </DropdownMenuItem>
