@@ -13,8 +13,8 @@ export default function NavBar() {
 
     return (
         <nav className="border-b border-gray-200 bg-white sticky top-0 z-50">
-            <div className="container mx-auto flex gap-5 h-16 items-center px-4 justify-between">
-                <Link href="/" className="flex items-center gap-2 text-2xl font-semibold text-primary">
+            <div className="w-full flex gap-5 h-16 items-center px-4 justify-between">
+                <Link href="/" className="flex items-center gap-2 text-lg md:text-2xl font-semibold text-primary">
                     <Briefcase />
                     Job Tracker
                 </Link>
@@ -30,7 +30,7 @@ export default function NavBar() {
 
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
-                                    <Avatar className="cursor-pointer me-3">
+                                    <Avatar className="cursor-pointer">
                                         <AvatarFallback className="bg-primary text-white">
                                             {session?.user?.name?.split(" ").map(n => n[0]).join("").toUpperCase()}
                                         </AvatarFallback>

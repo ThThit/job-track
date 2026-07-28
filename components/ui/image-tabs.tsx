@@ -14,13 +14,13 @@ export default function ImageTabs() {
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-6xl">
                     {/* Tabs */}
-                    <div className="flex gap-2 justify-center mb-8">
+                    <div className="flex flex-wrap gap-2 justify-center mb-8 relative z-10">
                         <Button
-                            onClick={() => setActiveTab("organize")} className={`rounded-lg px-6 py-3 text-sm font-medium transition-colors ${activeTab == "organize" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Organized Applications</Button>
+                            onClick={() => setActiveTab("organize")} className={`rounded-lg px-3 md:px-6 py-3 text-xs md:text-sm font-medium transition-colors ${activeTab == "organize" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Organized Applications</Button>
                         <Button
-                            onClick={() => setActiveTab("hired")} className={`rounded-lg px-6 py-3 text-sm font-medium transition-colors ${activeTab == "hired" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Get Hired</Button>
+                            onClick={() => setActiveTab("hired")} className={`rounded-lg px-3 md:px-6 py-3 text-xs md:text-sm font-medium transition-colors ${activeTab == "hired" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Get Hired</Button>
                         <Button
-                            onClick={() => setActiveTab("boards")} className={`rounded-lg px-6 py-3 text-sm font-medium transition-colors ${activeTab == "boards" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Manage Boards</Button>
+                            onClick={() => setActiveTab("boards")} className={`rounded-lg px-3 md:px-6 py-3 text-xs md:text-sm font-medium transition-colors ${activeTab == "boards" ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>Manage Boards</Button>
                     </div>
                     <div className="relative mx-auto max-w-5xl overflow-hidden rounded-lg border border-gray-200 shadow-xl">
                         {activeTab == "organize" &&

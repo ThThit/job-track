@@ -1,13 +1,15 @@
 "use client";
 
 import { Board, Column } from "@/lib/models/models.types";
-import { Award, Calendar, CheckCircle2, Mic, XCircle, MoreHorizontal, MoreVertical, Trash2 } from "lucide-react";
+import { Award, Calendar, CheckCircle2, Mic, XCircle, MoreHorizontal, MoreVertical, Trash2, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "./ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import CreateJobApplicationDialog from "./create-job-dialog";
 import JobApplicationCard from "./job-application-card";
 import { deleteJobColumn } from "@/app/actions/job-applications";
+import { useState } from "react";
+import CreateJobColumnDialog from "./create-job-column-dialog";
 
 interface kanbanBoardProps {
     board: Board;
@@ -100,6 +102,7 @@ function DroppableColumn({
 
 export default function KanbanBoard({ board, userId }: kanbanBoardProps) {
     const columns = board.columns;
+    const [createJobColumnOpen, setCreateJobColumnOpen] = useState(false);
     return (
         <>
             <div className="overflow-hidden">
@@ -115,6 +118,11 @@ export default function KanbanBoard({ board, userId }: kanbanBoardProps) {
                     })}
                 </div>
             </div>
+            <Button onClick={() => setCreateJobColumnOpen(true)} className="fixed bottom-6 right-6 rounded-full shadow-lg px-5 py-3 gap-2">
+                <Plus className="h-4 w-4" />
+                Create Column
+            </Button>
+            <CreateJobColumnDialog boardId={ board._id } open={createJobColumnOpen} onOpenChange={setCreateJobColumnOpen}></CreateJobColumnDialog>
         </>
     );
 }
