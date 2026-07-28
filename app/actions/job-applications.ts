@@ -172,7 +172,7 @@ export async function createJobColumn(prevState: CreateJobColumnState, formData:
             name: columnName,
             color: columnColor,
             boardId,
-            order: board.column.length,
+            order: board.columns.length,
             jobApplications: [],
         });
 

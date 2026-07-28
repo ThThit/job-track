@@ -53,7 +53,7 @@ export default function CreateJobApplicationDialog({
             if (result.success) setIsOpen(false);
         });
     }
-Dialog
+    
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             {!job && (

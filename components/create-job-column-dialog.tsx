@@ -1,7 +1,7 @@
 "use client";
 
-import { CreateJobColumnState } from "@/app/actions/job-applications";
-import { useState, useTransition } from "react";
+import { CreateJobColumnState, createJobColumn } from "@/app/actions/job-applications";
+import { useState, useActionState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -12,6 +12,7 @@ const COLOR_OPTIONS = [
     { label: "Purple", value: "bg-purple-500" },
     { label: "Green", value: "bg-green-500" },
     { label: "Yellow", value: "bg-yellow-500" },
+    { label: "Red", value: "bg-red-500" },
 ];
 
 interface CreateJobColumnDialogProps {
@@ -25,18 +26,21 @@ export default function CreateJobColumnDialog({
     open,
     onOpenChange,
 }: CreateJobColumnDialogProps) {
-    const [state, setState] = useState<CreateJobColumnState>({ success: false });
-    const [isPending, startTransition] = useTransition();
+    const [state, formAction, isPending] = useActionState(createJobColumn, { success: false });
     const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0].value);
+
+    useEffect(() => {
+        if (state.success) onOpenChange(false);
+    }, [state.success]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-sm">
+            <DialogContent className="max-w-sm p-5">
                 <DialogHeader>
                     <DialogTitle>Create Column</DialogTitle>
                     <DialogDescription>Add a new column to your board.</DialogDescription>
                 </DialogHeader>
-                <form className="space-y-4">
+                <form className="space-y-4" action={formAction}>
                     <input type="hidden" name="boardId" value={boardId} />
                     <input type="hidden" name="columnColor" value={selectedColor} />
                     <div className="space-y-2">
