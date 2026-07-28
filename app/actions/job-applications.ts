@@ -3,6 +3,7 @@
 import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";
 import { Board, Column, JobApplication } from "@/lib/models";
+import jobApplications from "@/lib/models/job-applications";
 import { revalidatePath } from "next/cache";
 
 function extractJobFields(formData: FormData) {
@@ -23,6 +24,11 @@ export type CreateJobState = {
     success: boolean;
     error?: string;
 };
+
+export type CreateJobColumnState = {
+    success: boolean;
+    error?: string;
+}
 
 export async function createJobAction(prevState: CreateJobState, formData: FormData): Promise<CreateJobState> {
     const session = await getSession();
@@ -136,9 +142,47 @@ export async function deleteJobColumn(id: string) {
 
         await Column.deleteOne({ _id: id });
 
+        console.log("deleteJobColumn success:", id);
         revalidatePath("/dashboard");
         return { success: true };
     } catch (e) {
         return { error: (e as Error).message };
+    }
+}
+
+export async function createJobColumn(prevState: CreateJobColumnState, formData: FormData): Promise<CreateJobColumnState> {
+    const session = await getSession();
+    console.log("session:", session?.user?.id);
+    if (!session?.user) return {
+        success: false, error: "Unathorized"
+    };
+
+    const columnName = formData.get("columnName") as string;
+    const columnColor = formData.get("columnColor") as string;
+    const boardId = formData.get("boardId") as string;
+
+    if (!columnName) return { success: false, error: "Need a column name" };
+
+    try {
+        await connectDB();
+        const board = await Board.findById(boardId);
+        if (!board) return { success: false, error: "Board not found" };
+
+        const newColumns = await Column.create({
+            name: columnName,
+            color: columnColor,
+            boardId,
+            order: board.columns.length,
+            jobApplications: [],
+        });
+
+        await Board.findByIdAndUpdate(boardId, {
+            $push: { columns: newColumns._id }
+        });
+
+        revalidatePath("/dashboard");
+        return { success: true };
+    } catch (err) {
+        return { success: false, error: (err as Error).message };
     }
 }

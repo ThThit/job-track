@@ -31,7 +31,7 @@ export default function JobApplicationCard({
                 console.error("Failed to delete job application", result.error);
             }
         } catch (err) {
-            console.error("Failed to move job application: ", err);
+            console.error("Failed to delete job application: ", err);
         }
     }
 

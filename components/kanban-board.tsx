@@ -1,12 +1,15 @@
 "use client";
 
 import { Board, Column } from "@/lib/models/models.types";
-import { Award, Calendar, CheckCircle2, Mic, XCircle, MoreHorizontal, MoreVertical, Trash2 } from "lucide-react";
+import { Award, Calendar, CheckCircle2, Mic, XCircle, MoreHorizontal, MoreVertical, Trash2, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "./ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import CreateJobApplicationDialog from "./create-job-dialog";
 import JobApplicationCard from "./job-application-card";
+import { deleteJobColumn } from "@/app/actions/job-applications";
+import { useState } from "react";
+import CreateJobColumnDialog from "./create-job-column-dialog";
 
 interface kanbanBoardProps {
     board: Board;
@@ -46,7 +49,22 @@ function DroppableColumn({
     column, config, boardId
 }: {
     column: Column; config: ColConfig; boardId: string;
-}) {
+    }) {
+    
+    async function handleDelete() {
+        try {
+            const result = await deleteJobColumn(column._id);
+
+            if (result.error) {
+                 console.error("Failed to delete job column", result.error);
+            } else {
+                console.log("Success");
+            }
+        } catch (err) {
+            console.error("Failed to delete job column: ", err);
+        }
+    }
+    
     return (
         <Card className="w-full md:min-w-75 md:w-75 flex shrink-0 shadow-md p-0 rounded-br-none">
             <CardHeader className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}>
@@ -63,7 +81,7 @@ function DroppableColumn({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleDelete()}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete Column
                             </DropdownMenuItem>
@@ -84,6 +102,7 @@ function DroppableColumn({
 
 export default function KanbanBoard({ board, userId }: kanbanBoardProps) {
     const columns = board.columns;
+    const [createJobColumnOpen, setCreateJobColumnOpen] = useState(false);
     return (
         <>
             <div className="overflow-hidden">
@@ -99,6 +118,11 @@ export default function KanbanBoard({ board, userId }: kanbanBoardProps) {
                     })}
                 </div>
             </div>
+            <Button onClick={() => setCreateJobColumnOpen(true)} className="fixed bottom-6 right-6 rounded-full shadow-lg px-5 py-3 gap-2">
+                <Plus className="h-4 w-4" />
+                Create Column
+            </Button>
+            <CreateJobColumnDialog boardId={ board._id } open={createJobColumnOpen} onOpenChange={setCreateJobColumnOpen}></CreateJobColumnDialog>
         </>
     );
 }

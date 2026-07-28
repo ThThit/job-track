@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 // also used as edit job dialog
 
@@ -53,7 +53,7 @@ export default function CreateJobApplicationDialog({
             if (result.success) setIsOpen(false);
         });
     }
-
+    
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             {!job && (
